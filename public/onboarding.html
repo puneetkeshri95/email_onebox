@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Onebox - Welcome</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="onboarding.css">
+</head>
+<body>
+    <!-- Animated Background -->
+    <div class="animated-bg">
+        <div class="bg-circle circle-1"></div>
+        <div class="bg-circle circle-2"></div>
+        <div class="bg-circle circle-3"></div>
+        <div class="bg-circle circle-4"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <span class="logo-icon">📧</span>
+                <span class="logo-text">Email Onebox</span>
+            </div>
+            <div class="nav-actions">
+                <button class="nav-btn" data-scroll="features">Features</button>
+                <button class="nav-btn" data-scroll="how-it-works">How it Works</button>
+                <button class="cta-btn" data-scroll="get-started">Get Started</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-icon">🚀</span>
+                    <span>AI-Powered Email Management</span>
+                </div>
+                <h1 class="hero-title">
+                    Manage All Your Emails in 
+                    <span class="gradient-text">One Smart Box</span>
+                </h1>
+                <p class="hero-description">
+                    Connect Gmail and Outlook accounts, get AI-powered email classification, 
+                    intelligent reply suggestions, and real-time Slack notifications. 
+                    Transform your email workflow today.
+                </p>
+                <div class="hero-features">
+                    <div class="feature-item">
+                        <span class="feature-icon">⚡</span>
+                        <span>Real-time Sync</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🤖</span>
+                        <span>AI Classification</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">🔍</span>
+                        <span>Smart Search</span>
+                    </div>
+                    <div class="feature-item">
+                        <span class="feature-icon">💬</span>
+                        <span>RAG Replies</span>
+                    </div>
+                </div>
+                <div class="hero-actions">
+                    <button class="primary-btn" data-scroll="get-started">
+                        <span class="btn-icon">🎯</span>
+                        Start Managing Emails
+                    </button>
+                    <button class="secondary-btn" id="showDemoBtn">
+                        <span class="btn-icon">▶️</span>
+                        Watch Demo
+                    </button>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="email-preview">
+                    <div class="email-header">
+                        <div class="email-dots">
+                            <span class="dot red"></span>
+                            <span class="dot yellow"></span>
+                            <span class="dot green"></span>
+                        </div>
+                        <span class="email-title">Email Onebox Dashboard</span>
+                    </div>
+                    <div class="email-content">
+                        <div class="email-sidebar">
+                            <div class="account-item">
+                                <span class="account-icon gmail">G</span>
+                                <span>Gmail Account</span>
+                                <span class="status connected">●</span>
+                            </div>
+                            <div class="account-item">
+                                <span class="account-icon outlook">O</span>
+                                <span>Outlook Account</span>
+                                <span class="status connected">●</span>
+                            </div>
+                        </div>
+                        <div class="email-list">
+                            <div class="email-item priority-high">
+                                <span class="email-category interested">Interested</span>
+                                <span class="email-subject">Meeting Request - Project Discussion</span>
+                                <span class="email-ai">🤖 AI: High Priority</span>
+                            </div>
+                            <div class="email-item">
+                                <span class="email-category meeting">Meeting Booked</span>
+                                <span class="email-subject">Calendar Invite Accepted</span>
+                                <span class="email-slack">📱 Slack Notified</span>
+                            </div>
+                            <div class="email-item">
+                                <span class="email-category spam">Spam</span>
+                                <span class="email-subject">You've won a million dollars!</span>
+                                <span class="email-ai">🤖 AI: Auto-filtered</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">Powerful Features for Modern Email Management</h2>
+                <p class="section-description">Everything you need to stay on top of your email game</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <span class="feature-icon-large">⚡</span>
+                    </div>
+                    <h3>Real-time IMAP Sync</h3>
+                    <p>No polling, no delays. Get emails as they arrive with instant IMAP IDLE synchronization.</p>
+                    <ul class="feature-list">
+                        <li>Gmail & Outlook support</li>
+                        <li>Zero latency updates</li>
+                        <li>Secure OAuth authentication</li>
+                    </ul>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <span class="feature-icon-large">🤖</span>
+                    </div>
+                    <h3>AI Email Classification</h3>
+                    <p>Hugging Face transformers automatically categorize your emails for better organization.</p>
+                    <ul class="feature-list">
+                        <li>Interested prospects</li>
+                        <li>Meeting bookings</li>
+                        <li>Spam detection</li>
+                        <li>Out of office detection</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <span class="feature-icon-large">🔍</span>
+                    </div>
+                    <h3>Elasticsearch Search</h3>
+                    <p>Lightning-fast email search across all your connected accounts with advanced filtering.</p>
+                    <ul class="feature-list">
+                        <li>Full-text search</li>
+                        <li>Date range filtering</li>
+                        <li>Category-based sorting</li>
+                        <li>Attachment search</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <span class="feature-icon-large">💬</span>
+                    </div>
+                    <h3>RAG-Powered Replies</h3>
+                    <p>ChromaDB vector search provides intelligent reply suggestions based on your email history.</p>
+                    <ul class="feature-list">
+                        <li>Context-aware suggestions</li>
+                        <li>Personalized responses</li>
+                        <li>Learning from history</li>
+                        <li>Smart templates</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <span class="feature-icon-large">📱</span>
+                    </div>
+                    <h3>Slack Integration</h3>
+                    <p>Get instant notifications for important emails directly in your Slack channels.</p>
+                    <ul class="feature-list">
+                        <li>Priority email alerts</li>
+                        <li>Custom notification rules</li>
+                        <li>Team collaboration</li>
+                        <li>Webhook triggers</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-container">
+                        <span class="feature-icon-large">🎯</span>
+                    </div>
+                    <h3>Multi-Account Management</h3>
+                    <p>Seamlessly manage multiple Gmail and Outlook accounts from a single, unified interface.</p>
+                    <ul class="feature-list">
+                        <li>Account switching</li>
+                        <li>Unified inbox view</li>
+                        <li>Cross-account search</li>
+                        <li>Individual account metrics</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section id="how-it-works" class="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title">How It Works</h2>
+                <p class="section-description">Get started in minutes, not hours</p>
+            </div>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Connect Your Accounts</h3>
+                        <p>Securely connect your Gmail and Outlook accounts using OAuth authentication. No passwords stored.</p>
+                        <div class="step-visual">
+                            <div class="connect-accounts">
+                                <div class="account-option gmail">
+                                    <span class="account-logo">G</span>
+                                    <span>Connect Gmail</span>
+                                </div>
+                                <div class="account-option outlook">
+                                    <span class="account-logo">O</span>
+                                    <span>Connect Outlook</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>AI Analyzes Your Emails</h3>
+                        <p>Our AI automatically categorizes incoming emails and provides intelligent insights.</p>
+                        <div class="step-visual">
+                            <div class="ai-analysis">
+                                <div class="email-flow">
+                                    <div class="email-in">📧 New Email</div>
+                                    <div class="ai-process">🤖 AI Analysis</div>
+                                    <div class="email-categorized">📊 Categorized</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Manage & Respond</h3>
+                        <p>Use smart search, get reply suggestions, and receive Slack notifications for important emails.</p>
+                        <div class="step-visual">
+                            <div class="management-tools">
+                                <div class="tool">🔍 Search</div>
+                                <div class="tool">💬 Reply</div>
+                                <div class="tool">📱 Notify</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Get Started Section -->
+    <section id="get-started" class="get-started">
+        <div class="container">
+            <div class="get-started-content">
+                <h2 class="section-title">Ready to Transform Your Email Experience?</h2>
+                <p class="section-description">
+                    Join thousands of professionals who have streamlined their email workflow with Email Onebox
+                </p>
+                
+                <div class="auth-container">
+                    <div class="auth-options">
+                        <button class="auth-btn gmail-btn" id="connectGmailBtn">
+                            <span class="auth-icon">G</span>
+                            <div class="auth-text">
+                                <span class="auth-title">Connect with Gmail</span>
+                                <span class="auth-subtitle">Secure OAuth authentication</span>
+                            </div>
+                        </button>
+                        
+                        <button class="auth-btn outlook-btn" id="connectOutlookBtn">
+                            <span class="auth-icon">O</span>
+                            <div class="auth-text">
+                                <span class="auth-title">Connect with Outlook</span>
+                                <span class="auth-subtitle">Microsoft OAuth integration</span>
+                            </div>
+                        </button>
+                    </div>
+                    
+                    <div class="auth-benefits">
+                        <div class="benefit">
+                            <span class="benefit-icon">🔒</span>
+                            <span>Secure OAuth - No passwords stored</span>
+                        </div>
+                        <div class="benefit">
+                            <span class="benefit-icon">⚡</span>
+                            <span>Instant setup - Ready in seconds</span>
+                        </div>
+                        <div class="benefit">
+                            <span class="benefit-icon">🆓</span>
+                            <span>Free to use - No hidden costs</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="trust-indicators">
+                    <div class="trust-item">
+                        <span class="trust-number">5,000+</span>
+                        <span class="trust-label">Emails Processed</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-number">99.9%</span>
+                        <span class="trust-label">Uptime</span>
+                    </div>
+                    <div class="trust-item">
+                        <span class="trust-number">< 1s</span>
+                        <span class="trust-label">Response Time</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <span class="logo-icon">📧</span>
+                    <span class="logo-text">Email Onebox</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#how-it-works">How it Works</a>
+                    <a href="#get-started">Get Started</a>
+                </div>
+                <div class="footer-tech">
+                    <span>Built with TypeScript, Node.js, Elasticsearch & AI</span>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h3>Connecting Your Account...</h3>
+            <p>Please wait while we securely authenticate your email account.</p>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="onboarding.js"></script>
+</body>
+</html>

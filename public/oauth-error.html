@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Error - Email Onebox</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .error-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .error-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 40px;
+            animation: shake 0.6s ease;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        p {
+            color: #718096;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .error-info {
+            background: rgba(245, 101, 101, 0.1);
+            border: 1px solid rgba(245, 101, 101, 0.2);
+            color: #c53030;
+            padding: 16px;
+            border-radius: 10px;
+            margin: 20px 0;
+            font-weight: 500;
+        }
+
+        .closing-message {
+            background: rgba(160, 174, 192, 0.1);
+            padding: 16px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #4a5568;
+            font-weight: 600;
+            border: 1px solid rgba(160, 174, 192, 0.2);
+        }
+
+        .countdown {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-icon">✗</div>
+        <h1>Authentication Failed</h1>
+        <p>We encountered an error while connecting your email account.</p>
+
+        <div class="error-info">
+            <strong>Error:</strong> <span id="error-message">Unknown error occurred</span>
+        </div>
+
+        <div class="closing-message">
+            <p style="margin: 0;">
+                This window will close automatically in <span class="countdown" id="countdown">5</span> seconds
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const error = urlParams.get('error');
+
+        // Update error message
+        document.getElementById('error-message').textContent = error || 'Unknown error occurred';
+
+        // Countdown and auto-close
+        let countdown = 5;
+        const countdownElement = document.getElementById('countdown');
+        
+        const timer = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+            
+            if (countdown <= 0) {
+                clearInterval(timer);
+                
+                // Send error message to parent window one final time
+                if (window.opener && !window.opener.closed) {
+                    try {
+                        window.opener.postMessage({
+                            type: 'oauth-error',
+                            error: error || 'Authentication failed'
+                        }, window.location.origin);
+                    } catch (e) {
+                        console.error('Final error message send failed:', e);
+                    }
+                }
+                
+                // Close the popup
+                window.close();
+            }
+        }, 1000);
+
+        // Also try to communicate with parent immediately and repeatedly
+        if (window.opener && !window.opener.closed) {
+            const sendErrorMessage = () => {
+                try {
+                    window.opener.postMessage({
+                        type: 'oauth-error',
+                        error: error || 'Authentication failed'
+                    }, window.location.origin);
+                    console.log('Error message sent to parent window');
+                } catch (e) {
+                    console.error('Failed to send message to parent:', e);
+                }
+            };
+            
+            // Send immediately
+            sendErrorMessage();
+            
+            // Send again after short delays
+            setTimeout(sendErrorMessage, 100);
+            setTimeout(sendErrorMessage, 500);
+        } else {
+            console.log('No window.opener available or parent window is closed');
+        }
+    </script>
+</body>
+
+</html>

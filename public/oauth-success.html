@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OAuth Success - Email Onebox</title>
+    <style>
+        body {
+            font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .success-container {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #48bb78 0%, #38b2ac 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 40px;
+            animation: bounceIn 0.6s ease;
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0.3);
+                opacity: 0;
+            }
+
+            50% {
+                transform: scale(1.05);
+            }
+
+            70% {
+                transform: scale(0.9);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 1.8em;
+            font-weight: 700;
+        }
+
+        p {
+            color: #718096;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .email-info {
+            background: rgba(102, 126, 234, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+        }
+
+        .provider-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .gmail-badge {
+            background: linear-gradient(135deg, #ea4335 0%, #fbbc05 100%);
+            color: white;
+        }
+
+        .outlook-badge {
+            background: linear-gradient(135deg, #0078d4 0%, #106ebe 100%);
+            color: white;
+        }
+
+        .closing-message {
+            background: rgba(72, 187, 120, 0.1);
+            padding: 16px;
+            border-radius: 10px;
+            margin: 20px 0;
+            color: #2d5016;
+            font-weight: 600;
+            border: 1px solid rgba(72, 187, 120, 0.2);
+        }
+
+        .countdown {
+            font-size: 18px;
+            font-weight: 700;
+            color: #667eea;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="success-container">
+        <div class="success-icon">✓</div>
+        <h1 id="success-title">Account Connected!</h1>
+        <p id="success-description">Your email account has been successfully connected.</p>
+
+        <div class="email-info">
+            <div id="provider-badge" class="provider-badge"></div>
+            <div><strong>Email:</strong> <span id="email-address"></span></div>
+            <div id="returning-user-info" style="margin-top: 10px; font-style: italic; color: #666; display: none;">
+                Welcome back! We've updated your credentials and preserved your sync history.
+            </div>
+        </div>
+
+        <div class="closing-message">
+            <p style="margin: 0;">
+                ✨ This window will close automatically in <span class="countdown" id="countdown">3</span> seconds
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Parse URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const email = urlParams.get('email');
+        const provider = urlParams.get('provider');
+        const isReturning = urlParams.get('returning') === 'true';
+
+        // Update page content based on whether user is returning
+        document.getElementById('email-address').textContent = email || 'Unknown';
+
+        if (isReturning) {
+            document.getElementById('success-title').textContent = 'Welcome Back!';
+            document.getElementById('success-description').textContent = 'Your account has been reconnected with updated credentials.';
+            document.getElementById('returning-user-info').style.display = 'block';
+        }
+
+        const badge = document.getElementById('provider-badge');
+        badge.textContent = provider || 'Unknown';
+        badge.className = `provider-badge ${provider?.toLowerCase()}-badge`;
+
+        // Countdown and auto-close
+        let countdown = 3;
+        const countdownElement = document.getElementById('countdown');
+
+        const timer = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown;
+
+            if (countdown <= 0) {
+                clearInterval(timer);
+
+                // Send success message to parent window one final time
+                if (window.opener && !window.opener.closed) {
+                    try {
+                        window.opener.postMessage({
+                            type: 'oauth-success',
+                            email: email,
+                            provider: provider
+                        }, window.location.origin);
+                    } catch (e) {
+                        console.error('Final message send failed:', e);
+                    }
+                }
+
+                // Close the popup
+                window.close();
+            }
+        }, 1000);
+
+        // Also try to communicate with parent immediately and repeatedly
+        if (window.opener && !window.opener.closed) {
+            const sendSuccessMessage = () => {
+                try {
+                    window.opener.postMessage({
+                        type: 'oauth-success',
+                        email: email,
+                        provider: provider
+                    }, window.location.origin);
+                    console.log('Success message sent to parent window');
+                } catch (e) {
+                    console.error('Failed to send message to parent:', e);
+                }
+            };
+
+            // Send immediately
+            sendSuccessMessage();
+
+            // Send again after short delays to ensure it's received
+            setTimeout(sendSuccessMessage, 100);
+            setTimeout(sendSuccessMessage, 500);
+            setTimeout(sendSuccessMessage, 1000);
+        } else {
+            console.log('No window.opener available or parent window is closed');
+        }
+
+        // Also try to redirect parent if possible as a fallback
+        if (window.opener && !window.opener.closed) {
+            setTimeout(() => {
+                try {
+                    window.opener.location.href = '/';
+                } catch (e) {
+                    console.log('Could not redirect parent window');
+                }
+            }, 2000);
+        }
+    </script>
+</body>
+
+</html>

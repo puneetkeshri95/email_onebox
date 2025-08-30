@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📧 Email Onebox - Feature-Rich Email Management</title>
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📧</text></svg>">
+    
+    <!-- Modern Typography -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div id="app">
+        <!-- Gmail-like Header -->
+        <header class="gmail-header">
+            <div class="header-left">
+                <div class="logo">
+                    <span class="logo-icon">📧</span>
+                    <span class="logo-text">Email Onebox</span>
+                </div>
+            </div>
+
+            <div class="header-search">
+                <div class="search-container">
+                    <div class="search-icon">🔍</div>
+                    <input type="text" id="searchInput" placeholder="Search mail" />
+                                        <button id="searchBtn" class="search-btn" title="Search emails">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"></circle>
+                            <path d="m21 21-4.35-4.35"></path>
+                        </svg>
+                    </button>
+                    <button id="composeBtn" class="compose-btn" title="Compose new email">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 3h18v18H3zM3 9l9 6 9-6"></path>
+                        </svg>
+                        Compose
+                    </button>
+                </div>
+            </div>
+
+            <div class="header-right">
+                <div class="oauth-actions-header">
+                    <button id="addGmailBtn" class="oauth-btn gmail-btn">
+                        <span class="oauth-icon">📧</span>
+                        Add Gmail
+                    </button>
+                    <button id="addOutlookBtn" class="oauth-btn outlook-btn">
+                        <span class="oauth-icon">📨</span>
+                        Add Outlook
+                    </button>
+                </div>
+                <div class="header-stats">
+                    <div class="stat-item">
+                        <span class="stat-value" id="totalEmails">-</span>
+                        <span class="stat-label">Total</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="interestedEmails">-</span>
+                        <span class="stat-label">Interested</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-value" id="todayEmails">-</span>
+                        <span class="stat-label">Today</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+
+        <!-- Gmail-like Main Layout -->
+        <div class="gmail-container">
+            <!-- Fixed Sidebar -->
+            <nav class="gmail-sidebar">
+                <div class="sidebar-menu">
+                    <div class="menu-item active">
+                        <span class="menu-icon">📥</span>
+                        <span class="menu-text">Inbox</span>
+                        <span class="menu-count" id="inboxCount">-</span>
+                    </div>
+                    <div class="menu-item">
+                        <span class="menu-icon">📤</span>
+                        <span class="menu-text">Sent</span>
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="filters-section">
+                    <h4>Advanced Filters</h4>
+
+                    <div class="filter-group">
+                        <label>Quick Date Filters</label>
+                        <button class="quick-filter-btn" data-days="1">Today</button>
+                        <button class="quick-filter-btn" data-days="7">This Week</button>
+                        <button class="quick-filter-btn" data-days="30">This Month</button>
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="category-stats">
+                    <h4>Statistics</h4>
+                    <div id="categoryStats" class="stats-list">
+                        <!-- Category stats will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="oauth-accounts">
+                    <h4>Connected Accounts</h4>
+                    <div id="connectedAccounts" class="accounts-list">
+                        <!-- Connected accounts will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <div class="sidebar-divider"></div>
+
+                <div class="smart-replies-section">
+                    <h4>
+                        🤖 Smart Replies
+                        <button id="smartRepliesToggle" class="toggle-btn" title="Manage Smart Replies">⚙️</button>
+                    </h4>
+                    <div class="smart-replies-status" id="smartRepliesStatus">
+                        <div class="status-indicator">
+                            <span class="status-dot"></span>
+                            <span class="status-text">Checking...</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Collapsible Smart Replies Management -->
+                    <div id="smartRepliesPanel" class="smart-replies-panel hidden">
+                        <div class="panel-header">
+                            <h5>Business Context</h5>
+                            <button id="addContextBtn" class="add-btn">+ Add</button>
+                        </div>
+                        <div id="contextsList" class="contexts-list">
+                            <!-- Business contexts will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Email List View -->
+            <main class="gmail-main" id="emailListView">
+                <div class="email-list-header">
+                    <div class="list-controls">
+                        <input type="checkbox" id="selectAll" />
+                        <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
+                        
+                        <!-- Horizontal Filter Controls -->
+                        <div class="inline-filters">
+                            <select id="accountFilter" class="filter-select-inline">
+                                <option value="">All Accounts</option>
+                            </select>
+                            
+                            <select id="categoryFilter" class="filter-select-inline">
+                                <option value="">All Categories</option>
+                                <option value="interested">🎯 Interested</option>
+                                <option value="meeting_booked">📅 Meeting Booked</option>
+                                <option value="not_interested">❌ Not Interested</option>
+                                <option value="spam">🚫 Spam</option>
+                                <option value="out_of_office">🏖️ Out of Office</option>
+                            </select>
+                            
+                            <input type="date" id="dateFrom" class="filter-input-inline" placeholder="From Date" />
+                            <input type="date" id="dateTo" class="filter-input-inline" placeholder="To Date" />
+                            
+                            <button id="clearFilters" class="clear-filters-btn-inline">Clear</button>
+                        </div>
+                        
+                        <span class="email-count" id="emailCount">12 emails</span>
+                    </div>
+                </div>
+
+                <div class="email-list-container">
+                    <div id="loadingEmails" class="loading-state">
+                        <div class="loading-spinner">⏳</div>
+                        <p>Loading emails...</p>
+                    </div>
+
+                    <div id="emailList" class="gmail-email-list">
+                        <!-- Emails will be populated by JavaScript -->
+                    </div>
+
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <div class="empty-icon">📭</div>
+                        <h3>No emails found</h3>
+                        <p>Try adjusting your search criteria or filters.</p>
+                    </div>
+                </div>
+            </main>
+
+            <!-- Full Email View (Hidden by default) -->
+            <section class="gmail-email-view" id="emailDetailView" style="display: none;">
+                <div class="email-view-header">
+                    <button id="backToList" class="back-btn">← Back to Inbox</button>
+                    <div class="email-actions">
+                        <button class="action-btn">🗂️ Archive</button>
+                        <button class="action-btn">� Spam</button>
+                        <button class="action-btn">🗑️ Delete</button>
+                    </div>
+                </div>
+
+                <div class="email-detail-content">
+                    <div class="email-header-detailed">
+                        <h1 id="detailSubject" class="email-subject"></h1>
+                        <div class="email-meta-detailed">
+                            <div class="sender-info">
+                                <div id="detailFrom" class="sender-name"></div>
+                                <div class="sender-details">
+                                    <span>to</span> <span id="detailTo" class="recipients"></span>
+                                </div>
+                            </div>
+                            <div class="email-time">
+                                <span id="detailDate" class="email-date"></span>
+                                <span id="detailCategory" class="category-badge"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="email-body-container">
+                        <iframe id="emailHtmlViewer" class="email-html-viewer" sandbox="allow-same-origin allow-scripts"
+                            style="display: none;"></iframe>
+                        <div id="detailBodyFallback" class="email-body-fallback" style="display: none;"></div>
+                    </div>
+
+                    <div class="ai-suggestions" id="aiSuggestions" style="display: none;">
+                        <div class="suggestions-header">
+                            <h3>🤖 AI Suggested Replies</h3>
+                            <button id="generateReplyBtn" class="generate-reply-btn">✨ Generate Reply</button>
+                        </div>
+                        <div id="suggestedReplies" class="suggested-replies">
+                            <!-- AI suggestions will be populated here -->
+                        </div>
+                        <div id="suggestedReplyLoading" class="loading-state" style="display: none;">
+                            <div class="spinner-small"></div>
+                            <span>Generating smart reply...</span>
+                        </div>
+                    </div>
+
+                    <!-- Inline Compose Form -->
+                    <div class="inline-compose" id="inlineCompose" style="display: none;">
+                        <div class="compose-header">
+                            <h3>✍️ Reply to Email</h3>
+                        </div>
+                        
+                        <form id="inlineComposeForm" class="inline-compose-form">
+                            <div class="compose-field">
+                                <label for="inlineFromAccount">From:</label>
+                                <select id="inlineFromAccount" required>
+                                    <option value="">Select sender account...</option>
+                                </select>
+                            </div>
+
+                            <div class="compose-field">
+                                <label for="inlineToField">To:</label>
+                                <input type="text" id="inlineToField" placeholder="recipient@example.com" required>
+                            </div>
+
+                            <div class="compose-field">
+                                <label for="inlineSubjectField">Subject:</label>
+                                <input type="text" id="inlineSubjectField" placeholder="Enter email subject" required>
+                            </div>
+
+                            <div class="compose-field">
+                                <label for="inlineBodyField">Message:</label>
+                                <textarea id="inlineBodyField" placeholder="Type your message here..." rows="8" required></textarea>
+                            </div>
+
+                            <div class="compose-actions">
+                                <button type="button" id="inlineSendBtn" class="send-btn primary" onclick="emailClient.sendInlineReply()">
+                                    📤 Send Reply
+                                </button>
+                                <button type="button" class="cancel-btn" onclick="emailClient.clearInlineCompose()">
+                                    🗑️ Clear
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <!-- Compose Email Modal -->
+    <div id="composeModal" class="compose-modal" style="display: none;">
+        <div class="compose-modal-content">
+            <div class="compose-header">
+                <h3>✍️ Compose Email</h3>
+                <button id="closeComposeModal" class="close-modal-btn">✕</button>
+            </div>
+            
+            <form id="composeForm" class="compose-form">
+                <div class="compose-field">
+                    <label for="fromAccount">From:</label>
+                    <select id="fromAccount" required>
+                        <option value="">Select sender account...</option>
+                    </select>
+                </div>
+
+                <div class="compose-field">
+                    <label for="toField">To:</label>
+                    <input type="text" id="toField" placeholder="recipient@example.com, another@example.com" required>
+                    <small class="field-hint">Separate multiple emails with commas</small>
+                </div>
+
+                <div class="compose-field">
+                    <label for="ccField">CC:</label>
+                    <input type="text" id="ccField" placeholder="Optional: cc@example.com">
+                </div>
+
+                <div class="compose-field">
+                    <label for="bccField">BCC:</label>
+                    <input type="text" id="bccField" placeholder="Optional: bcc@example.com">
+                </div>
+
+                <div class="compose-field">
+                    <label for="subjectField">Subject:</label>
+                    <input type="text" id="subjectField" placeholder="Enter email subject" required>
+                </div>
+
+                <div class="compose-field">
+                    <label for="bodyField">Message:</label>
+                    <div class="compose-editor">
+                        <div class="editor-toolbar">
+                            <button type="button" id="boldBtn" class="editor-btn" title="Bold">B</button>
+                            <button type="button" id="italicBtn" class="editor-btn" title="Italic">I</button>
+                            <button type="button" id="linkBtn" class="editor-btn" title="Insert Link">🔗</button>
+                            <button type="button" id="toggleHtmlBtn" class="editor-btn" title="Toggle HTML">HTML</button>
+                        </div>
+                        <textarea id="bodyField" placeholder="Type your message here..." required></textarea>
+                    </div>
+                </div>
+
+                <div class="compose-field">
+                    <label for="attachments">Attachments:</label>
+                    <input type="file" id="attachments" multiple accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.xlsx,.xls,.ppt,.pptx,.zip,.rar">
+                    <small class="field-hint">Max 25MB per file, 10 files total</small>
+                    <div id="attachmentList" class="attachment-list"></div>
+                </div>
+
+                <div class="compose-options">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="isHtml"> Send as HTML
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="requestReadReceipt"> Request read receipt
+                    </label>
+                    <select id="priority">
+                        <option value="normal">Normal priority</option>
+                        <option value="high">High priority</option>
+                        <option value="low">Low priority</option>
+                    </select>
+                </div>
+
+                <div class="compose-actions">
+                    <button type="button" id="saveDraftBtn" class="draft-btn">📄 Save Draft</button>
+                    <button type="submit" id="sendEmailBtn" class="send-btn">📧 Send Email</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
+<label>Account</label>
+<select id="accountFilter">
+    <option value="">All Accounts</option>
+    <option value="gmail-primary">Gmail</option>
+    <option value="outlook-primary">Outlook</option>
+</select>
+</div>
+
+<div class="filter-group">
+    <label>Category</label>
+    <select id="categoryFilter">
+        <option value="">All Categories</option>
+        <option value="interested">🎯 Interested</option>
+        <option value="meeting_booked">📅 Meeting Booked</option>
+        <option value="not_interested">❌ Not Interested</option>
+        <option value="spam">🚫 Spam</option>
+        <option value="out_of_office">🏖️ Out of Office</option>
+    </select>
+</div>
+
+<div class="filter-group">
+    <label>Date Range</label>
+    <input type="date" id="dateFrom" />
+    <input type="date" id="dateTo" />
+</div>
+
+<button id="clearFilters" class="clear-btn">Clear Filters</button>
+</div>
+
+<div class="stats-section">
+    <h3>Statistics</h3>
+    <div id="categoryStats" class="category-stats">
+        <!-- Stats will be populated by JavaScript -->
+    </div>
+</div>
+</aside>
+
+<!-- Email List -->
+<section class="email-list-section">
+    <div class="section-header">
+        <h2>Emails</h2>
+        <div class="view-options">
+            <button id="refreshBtn" class="refresh-btn">🔄 Refresh</button>
+            <span class="email-count" id="emailCount">Loading...</span>
+        </div>
+    </div>
+
+    <div id="loadingSpinner" class="loading-spinner">
+        <div class="spinner"></div>
+        <p>Loading emails...</p>
+    </div>
+
+    <div id="emailList" class="email-list">
+        <!-- Emails will be populated by JavaScript -->
+    </div>
+
+    <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-icon">📭</div>
+        <h3>No emails found</h3>
+        <p>Try adjusting your search criteria or filters.</p>
+    </div>
+</section>
+
+<!-- Email Detail -->
+<section class="email-detail-section" id="emailDetail" style="display: none;">
+    <div class="detail-header">
+        <button id="closeDetail" class="close-btn">✕</button>
+        <h2>Email Details</h2>
+    </div>
+
+    <div class="detail-content">
+        <div class="email-header">
+            <div class="email-meta">
+                <div class="from-info">
+                    <span class="label">From:</span>
+                    <span id="detailFrom" class="value"></span>
+                </div>
+                <div class="to-info">
+                    <span class="label">To:</span>
+                    <span id="detailTo" class="value"></span>
+                </div>
+                <div class="subject-info">
+                    <span class="label">Subject:</span>
+                    <span id="detailSubject" class="value"></span>
+                </div>
+                <div class="date-info">
+                    <span class="label">Date:</span>
+                    <span id="detailDate" class="value"></span>
+                </div>
+                <div class="category-info">
+                    <span class="label">Category:</span>
+                    <span id="detailCategory" class="category-badge"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="email-body">
+            <!-- Replaced detailBody div with an iframe for rendering HTML emails -->
+            <iframe id="emailHtmlViewer" class="email-html-viewer" sandbox="allow-same-origin allow-scripts"
+                style="width: 100%; height: 100%; border: none;"></iframe>
+            <div id="detailBodyFallback" class="body-content" style="display: none;"></div>
+        </div>
+
+        <div class="ai-suggestions" id="aiSuggestions" style="display: none;">
+            <h3>💡 AI Suggested Reply</h3>
+            <div class="suggestion-content">
+                <div class="suggestion-confidence">
+                    <span>Confidence: <span id="suggestionConfidence"></span></span>
+                </div>
+                <div class="suggestion-text">
+                    <textarea id="suggestionReply" readonly></textarea>
+                </div>
+                <div class="suggestion-actions">
+                    <button id="copySuggestion" class="copy-btn">📋 Copy</button>
+                    <button id="regenerateSuggestion" class="regenerate-btn">🔄 Regenerate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+</main>
+
+<!-- Footer -->
+<footer class="footer">
+    <div class="footer-content">
+        <p>📧 Email Onebox v1.0.0 - Feature-Rich Email Management System</p>
+        <div class="footer-links">
+            <a href="/api/health" target="_blank">Health Check</a>
+            <a href="#" id="aboutBtn">About</a>
+        </div>
+    </div>
+</footer>
+
+<!-- Toast Notifications -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- Loading Overlay -->
+<div id="loadingOverlay" class="loading-overlay" style="display: none;">
+    <div class="loading-content">
+        <div class="spinner large"></div>
+        <p>Processing...</p>
+    </div>
+</div>
+
+<!-- Smart Replies Context Management Modal -->
+<div id="contextModal" class="context-modal" style="display: none;">
+    <div class="context-modal-content">
+        <div class="modal-header">
+            <h3>🤖 Smart Replies - Business Context</h3>
+            <button id="closeContextModal" class="close-modal-btn">✕</button>
+        </div>
+        
+        <div class="modal-body">
+            <div class="context-form">
+                <h4>Add New Business Context</h4>
+                <form id="addContextForm">
+                    <div class="form-group">
+                        <label for="contextContent">Content:</label>
+                        <textarea id="contextContent" placeholder="e.g., When someone is interested in a demo, provide the meeting link: https://cal.com/example" required></textarea>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="contextCategory">Category:</label>
+                            <select id="contextCategory" required>
+                                <option value="">Select category...</option>
+                                <option value="product_info">Product Info</option>
+                                <option value="meeting_booking">Meeting Booking</option>
+                                <option value="company_policy">Company Policy</option>
+                                <option value="sales_process">Sales Process</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contextPriority">Priority (1-10):</label>
+                            <input type="number" id="contextPriority" min="1" max="10" value="5" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contextKeywords">Keywords (comma-separated):</label>
+                        <input type="text" id="contextKeywords" placeholder="interested, demo, meeting, schedule" required>
+                    </div>
+                    
+                    <button type="submit" class="add-context-btn">Add Context</button>
+                </form>
+            </div>
+            
+            <div class="existing-contexts">
+                <h4>Existing Business Contexts</h4>
+                <div id="existingContextsList" class="contexts-list">
+                    <!-- Existing contexts will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<script src="script.js"></script>
+</body>
+
+</html>
